@@ -1,6 +1,7 @@
 package classes;
 import dataStructures.*;
 import exceptions.*;
+import classes.exceptions.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
