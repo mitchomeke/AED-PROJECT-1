@@ -1,7 +1,6 @@
 package dataStructures;
 import dataStructures.exceptions.*;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -29,6 +28,7 @@ public class ListInArray<E> implements List<E>, Serializable {
      * Construtor with capacity.
      * @param dimension - initial capacity of array.
      */
+
     @SuppressWarnings("unchecked")
     public ListInArray(int dimension) {
         elems = (E[]) new Object[dimension];
@@ -150,6 +150,7 @@ public class ListInArray<E> implements List<E>, Serializable {
      *
      * @param element to be inserted
      */
+    @SuppressWarnings("unchecked")
     public void addFirst(E element) {
         //TODO: Left as an exercise.
         if (isFull()){
@@ -171,6 +172,7 @@ public class ListInArray<E> implements List<E>, Serializable {
         }
         elems[0] = element;
     }
+    @SuppressWarnings("unchecked")
     private void growArray(){
         E[] temp = (E[]) new Object[size()*FACTOR];
         for (int i = 0; i < size();i++){

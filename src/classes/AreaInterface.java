@@ -10,9 +10,5 @@ public interface AreaInterface extends Serializable{
     boolean equalsName(String name);
     String getAreaName();
     GeographicLocationClass getAreaLocation();
-    ArrayIterator servicesIterator();
-    boolean serviceExists(String serviceName);
-    void addService(ServicesInterface service);
-    ServicesInterface service();
 
 }

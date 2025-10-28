@@ -1,21 +1,19 @@
 package classes;
 import dataStructures.*;
-import exceptions.*;
 import classes.exceptions.*;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class App implements AppInterface, Serializable {
     private AreaClass currentArea;
     private boolean currentAreaSaved;
     ListInArray<ServicesInterface> allServices;
-    private int servicesCounter;
     ListInArray<StudentInterface> allStudents;
-    private int studentsCounter;
     public StudentInterface currentStudent;
+    private ServicesInterface currentService;
     private SortedDoublyLinkedList<StudentInterface> sortedStudents;
     Comparator<StudentInterface> comparator;
     ListInArray<ServicesInterface> rank5;
@@ -24,7 +22,6 @@ public class App implements AppInterface, Serializable {
     ListInArray<ServicesInterface> rank2;
     ListInArray<ServicesInterface> rank1;
     ListInArray<ListInArray<ServicesInterface>> rankingServices;
-
     ListInArray<ServicesInterface> leisureServices;
     ListInArray<ServicesInterface> eatingServices;
     ListInArray<ServicesInterface> lodgingServices;
@@ -38,35 +35,41 @@ public class App implements AppInterface, Serializable {
 
     public App() {
         allServices = new ListInArray<>(LIST_DIMENSION);
-        servicesCounter = 0;
         allStudents = new ListInArray<>(LIST_DIMENSION);
-        studentsCounter = 0;
         comparator = (s1, s2) -> s1.getStudentName().compareTo(s2.getStudentName());
         sortedStudents = new SortedDoublyLinkedList<>(comparator);
-
         rankingServices = new ListInArray<>(LIST_DIMENSION);
-
         rank5 = new ListInArray<>(LIST_DIMENSION);
         rank4 = new ListInArray<>(LIST_DIMENSION);
         rank3 = new ListInArray<>(LIST_DIMENSION);
         rank2 = new ListInArray<>(LIST_DIMENSION);
         rank1 = new ListInArray<>(LIST_DIMENSION);
-
         rankingServices.addLast(rank5);
         rankingServices.addLast(rank4);
         rankingServices.addLast(rank3);
         rankingServices.addLast(rank2);
         rankingServices.addLast(rank1);
-
         leisureServices = new ListInArray<>(LIST_DIMENSION);
         lodgingServices = new ListInArray<>(LIST_DIMENSION);
         eatingServices = new ListInArray<>(LIST_DIMENSION);
+    }
+    private boolean serviceExists(String serviceName){
+        currentService = null;
+        int i = 0;
+        while (i < allServices.size()){
+            if (serviceName.equalsIgnoreCase(allServices.get(i).getserviceName())){
+                currentService = allServices.get(i);
+                return true;
+            }
+            i++;
+        }
+        return false;
     }
 
     private boolean studentExists(String studentName) {
         int i = 0;
         currentStudent = null;
-        while (i < getNumberOfStudents()) {
+        while (i < allStudents.size()) {
             if (allStudents.get(i).getStudentName().equalsIgnoreCase(studentName)) {
                 currentStudent = allStudents.get(i);
                 return true;
@@ -100,17 +103,17 @@ public class App implements AppInterface, Serializable {
             throw new InvalidServiceTypeException();
         } else if (outsideBoundingRectangle(latitude, longitude)) {
             throw new OutsideRectangleException();
-        } else if (servicePrice <= 0 && serviceType.equals(LODGING)) {
+        } else if (servicePrice <= ZERO && serviceType.equals(LODGING)) {
             throw new InvalidRoomException();
-        } else if (servicePrice <= 0 && serviceType.equals(EATING)) {
+        } else if (servicePrice <= ZERO && serviceType.equals(EATING)) {
             throw new InvalidMenuPriceException();
-        } else if (servicePrice <= 0 && serviceType.equals(LEISURE)) {
+        } else if (servicePrice <= ZERO && serviceType.equals(LEISURE)) {
             throw new InvalidTicketPriceException();
-        } else if ((serviceValue < 0 || serviceValue > 100) && serviceType.equals(LEISURE)) {
+        } else if ((AppInterface.outOfValueBounds(serviceValue)) && serviceType.equals(LEISURE)) {
             throw new InvalidDiscountException();
-        } else if ((serviceValue <= 0) && ((serviceType.equals(LODGING)) || serviceType.equals(EATING))) {
+        } else if ((serviceValue <= ZERO) && ((serviceType.equals(LODGING)) || serviceType.equals(EATING))) {
             throw new InvalidCapacityException();
-        } else if (currentArea.serviceExists(serviceName)) {
+        } else if (serviceExists(serviceName)) {
             throw new ServiceExistsException();
         } else {
             addServiceofType(serviceType, latitude, longitude, servicePrice, serviceValue, serviceName);
@@ -121,27 +124,24 @@ public class App implements AppInterface, Serializable {
         if (serviceType.equals(LODGING)) {
             LodgingService service = new LodgingService(latitude, longitude, servicePrice, serviceValue, serviceName,serviceType);
             allServices.addLast(service);
-            currentArea.addService(service);
             rank4.addLast(service);
             lodgingServices.addLast(service);
         } else if (serviceType.equals(EATING)) {
             EatingService service = new EatingService(latitude, longitude, servicePrice, serviceValue, serviceName,serviceType);
             allServices.addLast(service);
-            currentArea.addService(service);
             rank4.addLast(service);
             eatingServices.addLast(service);
         } else {
             LeisureService service = new LeisureService(latitude, longitude, servicePrice, serviceValue, serviceName,serviceType);
             allServices.addLast(service);
-            currentArea.addService(service);
             rank4.addLast(service);
             leisureServices.addLast(service);
         }
     }
 
     public ServicesInterface getServiceByName(String Name) {
-        if (currentArea.serviceExists(Name)) {
-            return currentArea.service();
+        if (serviceExists(Name)) {
+            return currentService;
         }
         return null;
     }
@@ -153,12 +153,16 @@ public class App implements AppInterface, Serializable {
         } else if (!boundsCheck(TopLatitude, leftLongitude, BottomLatitude, rightLongitude)) {
             throw new InvalidBoundsException();
         } else {
-            App app = new App();
-            AreaClass area = new AreaClass(AreaName, TopLatitude, leftLongitude, BottomLatitude, rightLongitude);
-            app.setCurrentArea(area);
-            app.unSaveArea();
-            return app;
+            return createNewArea(AreaName,TopLatitude,leftLongitude,BottomLatitude,rightLongitude);
+
         }
+    }
+    private AppInterface createNewArea(String areaName, long TopLatitude, long leftLongitude, long bottomLatitude, long rightLongitude){
+        App app = new App();
+        AreaClass area = new AreaClass(areaName, TopLatitude, leftLongitude,bottomLatitude, rightLongitude);
+        app.setCurrentArea(area);
+        app.unSaveArea();
+        return app;
     }
 
     @Override
@@ -187,25 +191,22 @@ public class App implements AppInterface, Serializable {
     private void addStudentByType(String studentType, String studentName, String Country, LodgingService lodging) {
         if (studentType.equalsIgnoreCase(BOOKISH)) {
             BookishStudent student = new BookishStudent(studentName, Country, lodging);
-            student.setCurrentLocation(lodging.getserviceName());
-            lodging.addStudent(student);
-            allStudents.addLast(student);
-            sortedStudents.add(student);
+            addStudentToSystem(student,lodging);
         } else if (studentType.equalsIgnoreCase(OUTGOING)) {
             OutgoingStudent student = new OutgoingStudent(studentName, Country, lodging);
-            student.setCurrentLocation(lodging.getserviceName());
-            lodging.addStudent(student);
-            allStudents.addLast(student);
-            sortedStudents.add(student);
+            addStudentToSystem(student,lodging);
             student.addService(lodging);
         } else {
             ThriftyStudent student = new ThriftyStudent(studentName, Country, lodging);
-            student.setCurrentLocation(lodging.getserviceName());
-            lodging.addStudent(student);
-            allStudents.addLast(student);
-            sortedStudents.add(student);
+            addStudentToSystem(student,lodging);
             student.addService(lodging);
         }
+    }
+    private void addStudentToSystem(StudentInterface student, LodgingService lodging){
+        student.setCurrentLocation(lodging.getserviceName());
+        lodging.addStudent(student);
+        allStudents.addLast(student);
+        sortedStudents.add(student);
     }
 
     @Override
@@ -221,10 +222,10 @@ public class App implements AppInterface, Serializable {
             StudentInterface student = getStudentByName(studentName);
             LodgingService location = student.getlodgingLocation();
             location.removeStudent(student);
+
             int studentIndex = allStudents.indexOf(student);
             allStudents.remove(studentIndex);
             sortedStudents.remove(student);
-
             removeStudentInEating0rLodging(student);
             return student;
         }
@@ -295,7 +296,7 @@ public class App implements AppInterface, Serializable {
 
     private boolean filenotFound(String Name) {
         App app = null;
-        String FullName = Name + ".ser";
+        String FullName = Name.toUpperCase()+FILE_EXTENSION;
         try (ObjectInputStream stream = new ObjectInputStream(new FileInputStream(FullName))) {
             app = (App) stream.readObject();
             if (app != null) {
@@ -304,13 +305,7 @@ public class App implements AppInterface, Serializable {
         } catch (IOException | ClassNotFoundException e) {
             return true;
         }
-
         return false;
-    }
-
-    public void load(String areaName) {
-
-
     }
 
     @Override
@@ -328,19 +323,25 @@ public class App implements AppInterface, Serializable {
         } else if (student instanceof ThriftyStudent && service.getRoomPrice() >= student.getlodgingLocation().getRoomPrice()) {
             throw new MoveNotAcceptableException();
         } else {
-            service.addStudent(student);
-            LodgingService oldLodging = student.getlodgingLocation();
-            oldLodging.removeStudent(student);
-            ServicesInterface oldService = getServiceByName(student.getCurrentLocation());
-            if (oldService instanceof EatingService) {
-                ((EatingService) oldService).removeStudent(student);
-            }
-            if (oldService instanceof LodgingService) {
-                ((LodgingService) oldService).removeStudent(student);
-            }
-            changeStudentLocation(service, student);
-            student.setLodgingLocation(service);
+            moveCurrentStudent(student,service);
         }
+    }
+    private void moveCurrentStudent(StudentInterface student, LodgingService service){
+        service.addStudent(student);
+
+        LodgingService oldLodging = student.getlodgingLocation();
+        oldLodging.removeStudent(student);
+
+        ServicesInterface oldService = getServiceByName(student.getCurrentLocation());
+        if (oldService instanceof EatingService) {
+            ((EatingService) oldService).removeStudent(student);
+        }
+        if (oldService instanceof LodgingService) {
+            ((LodgingService) oldService).removeStudent(student);
+        }
+
+        changeStudentLocation(service, student);
+        student.setLodgingLocation(service);
     }
 
     @Override
@@ -355,7 +356,7 @@ public class App implements AppInterface, Serializable {
 
     @Override
     public void starService(int star, String serviceName, String description) {
-        if (star < 1 || star > 5) {
+        if (star < ONE || star > FIVE) {
             throw new InvalidEvaluationException();
         }
         ServicesInterface service = getServiceByName(serviceName);
@@ -374,46 +375,46 @@ public class App implements AppInterface, Serializable {
 
     private void removeFromRank(int oldEval, ServicesInterface service) {
         switch (oldEval) {
-            case 5:
+            case FIVE -> {
                 int rank5pos = rank5.indexOf(service);
                 rank5.remove(rank5pos);
-                break;
-            case 4:
+            }
+            case FOUR -> {
                 int rank4pos = rank4.indexOf(service);
                 rank4.remove(rank4pos);
-                break;
-            case 3:
+            }
+            case THREE -> {
                 int rank3pos = rank3.indexOf(service);
                 rank3.remove(rank3pos);
-                break;
-            case 2:
+            }
+            case TWO -> {
                 int rank2pos = rank2.indexOf(service);
                 rank2.remove(rank2pos);
-                break;
-            case 1:
+            }
+            case ONE -> {
                 int rank1pos = rank1.indexOf(service);
                 rank1.remove(rank1pos);
-                break;
+            }
         }
     }
 
     private void addToRank(int star, ServicesInterface service) {
         switch (star) {
-            case 5:
+            case FIVE -> {
                 rank5.addLast(service);
-                break;
-            case 4:
+            }
+            case FOUR -> {
                 rank4.addLast(service);
-                break;
-            case 3:
+            }
+            case THREE -> {
                 rank3.addLast(service);
-                break;
-            case 2:
+            }
+            case TWO -> {
                 rank2.addLast(service);
-                break;
-            case 1:
+            }
+            case ONE -> {
                 rank1.addLast(service);
-                break;
+            }
         }
     }
 
@@ -430,7 +431,7 @@ public class App implements AppInterface, Serializable {
            throw new NoServiceOfTypeException();
        }
        else {
-         return getMostRelevantService(student,serviceType).getserviceName();
+         return Objects.requireNonNull(getMostRelevantService(student, serviceType)).getserviceName();
        }
     }
     private ListInArray<ServicesInterface> getServicesOfType(String serviceType){
@@ -477,19 +478,14 @@ public class App implements AppInterface, Serializable {
     }
 
     private ServicesInterface getServiceInRank(int bestAverage, String serviceType) {
-        switch (bestAverage){
-            case 5:
-                return mostTimeInRank(rank5,serviceType);
-            case 4:
-                return mostTimeInRank(rank4,serviceType);
-            case 3:
-                return mostTimeInRank(rank3,serviceType);
-            case 2:
-                return mostTimeInRank(rank2,serviceType);
-            case 1:
-                return mostTimeInRank(rank1,serviceType);
-        }
-        return null;
+        return switch (bestAverage) {
+            case FIVE -> mostTimeInRank(rank5, serviceType);
+            case FOUR -> mostTimeInRank(rank4, serviceType);
+            case THREE -> mostTimeInRank(rank3, serviceType);
+            case TWO -> mostTimeInRank(rank2, serviceType);
+            case ONE -> mostTimeInRank(rank1, serviceType);
+            default -> null;
+        };
     }
     private ServicesInterface mostTimeInRank(ListInArray<ServicesInterface> rank, String serviceType){
         if (!rank.isEmpty()){
@@ -511,17 +507,17 @@ public class App implements AppInterface, Serializable {
 
     @Override
     public String splitAreaName() {
-        if (currentArea != null) {
             return splitName(getCurrentAreaName());
-        }
-        return "";
     }
 
     @Override
     public boolean outsideBoundingRectangle(long latitude, long longitude) {
-        boolean insideLatitude = latitude <= currentArea.getAreaLocation().topLatitude && latitude >= currentArea.getAreaLocation().bottomLatitude;
-        boolean insideLongitude = longitude >= currentArea.getAreaLocation().leftLongitude && longitude <= currentArea.getAreaLocation().rightLongitude;
-        return !(insideLatitude && insideLongitude);
+        if(currentArea != null){
+            boolean insideLatitude = latitude <= currentArea.getAreaLocation().topLatitude && latitude >= currentArea.getAreaLocation().bottomLatitude;
+            boolean insideLongitude = longitude >= currentArea.getAreaLocation().leftLongitude && longitude <= currentArea.getAreaLocation().rightLongitude;
+            return !(insideLatitude && insideLongitude);
+        }
+        return false;
     }
 
     public void unSaveArea() {
@@ -538,7 +534,9 @@ public class App implements AppInterface, Serializable {
         return currentAreaSaved;
     }
 
+
     @Override
+    @SuppressWarnings("unchecked")
     public ArrayIterator<ServicesInterface> allServices() {
         return (ArrayIterator) allServices.iterator();
     }
@@ -621,7 +619,7 @@ public class App implements AppInterface, Serializable {
 
     @Override
     public Iterator<ServicesInterface> closerToRanking(String serviceType, int star, String studentName) {
-        if (star > 5 || star < 1) {
+        if (star > FIVE || star < ONE) {
             throw new InvalidEvaluationException();
         }
         StudentInterface student = getStudentByName(studentName);
@@ -698,6 +696,7 @@ public class App implements AppInterface, Serializable {
         }
         return listOfLowestDistancedServices.iterator();
     }
+
 
     private boolean hasServiceOfType(String serviceType) {
         int i = 0;

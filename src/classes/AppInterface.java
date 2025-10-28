@@ -13,6 +13,14 @@ public interface AppInterface extends Serializable {
   public final String OLDEST_TO_NEWEST = ">";
   public final String NEWEST_TO_OLDEST = "<";
   public final int LIST_DIMENSION = 5;
+  public final int ZERO = 0;
+  public final int ONE = 1;
+  public final int TWO = 2;
+  public final int THREE = 3;
+  public final int FOUR = 4;
+  public final int FIVE = 5;
+  public final int HUNDRED = 100;
+  public final String FILE_EXTENSION = ".ser";
 
     static boolean isValidInsertion(String insertionOrder){
       return insertionOrder.equals(NEWEST_TO_OLDEST) || insertionOrder.equals(OLDEST_TO_NEWEST);
@@ -23,6 +31,9 @@ public interface AppInterface extends Serializable {
     static boolean isnotValidStudent(String studentType){
       return !studentType.equals(BOOKISH) && !studentType.equals(OUTGOING) && !studentType.equals(THRIFTY);
     }
+    static boolean outOfValueBounds(int value){
+      return value < ZERO || value > HUNDRED;
+    }
   void addService(String serviceType, long latitude, long longitude, int servicePrice, int serviceValue, String serviceName);
   AppInterface createArea(long TopLatitude,long TopLongitude, long BottomLatitude, long BottomLongitude, String AreaName);
   boolean canSaveArea();
@@ -30,7 +41,6 @@ public interface AppInterface extends Serializable {
   String getCurrentAreaName();
   StudentInterface leave(String studentName);
   void go(String studentName, String serviceName);
-  void load(String areaName);
   void moveStudent(String studentName, String lodgingName);
   ServicesInterface where(String studentName);
   void starService(int star, String serviceName, String description);

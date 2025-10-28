@@ -29,7 +29,6 @@ abstract class AbstractServices implements ServicesInterface, Serializable{
         return serviceType;
     }
     public boolean hasTag(String tag){
-        //String[] splitTag = tag.split("");
         for (int i = 0; i < evaluations.size();i++){
             String[] splitDesc = evaluations.get(i).getDescription().split(" ");
             int w = 0;

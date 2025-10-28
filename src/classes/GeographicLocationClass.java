@@ -63,11 +63,13 @@ public class GeographicLocationClass implements GeographicLocation, Serializable
 
     @Override
     public void setLatitude(long latitude) {
+        this.latitude = latitude;
 
     }
 
     @Override
     public void setLongitude(long longitude) {
+        this.longitude = longitude;
 
     }
 }

@@ -2,13 +2,16 @@ import java.io.*;
 import java.util.Scanner;
 
 import dataStructures.*;
-import exceptions.*;
 import classes.*;
 import classes.exceptions.*;
 
 import java.io.ObjectOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+/**
+ @author MITCHELL OMEKE (67294) m.omeke@campus.fct.unl.pt
+@author ABIOLA OGUNSOLA (73214) a.ogunsola@campus.fct.unl.pt
+**/
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
@@ -97,7 +100,7 @@ public class Main {
     static App application;
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
         Scanner input = new Scanner(System.in);
         application = new App();
         String command;
@@ -107,7 +110,7 @@ public class Main {
                     case FIND_COMMAND -> find(application,input);
                     case TAG_COMMAND -> tag(application,input);
                     case RANKED_COMMAND -> ranked(application,input);
-                    case RANKING_COMMAND -> ranking(application,input);
+                    case RANKING_COMMAND -> ranking(application);
                     case STAR_COMMAND -> star(application,input);
                     case VISITED_COMMAND -> visited(application,input);
                     case WHERE_COMMAND -> where(application,input);
@@ -129,7 +132,7 @@ public class Main {
         } while (!command.equals(EXIT_COMMAND));
     }
 
-    private static void ranking(App application, Scanner input) {
+    private static void ranking(App application) {
         try {
             Iterator<ListInArray<ServicesInterface>> iterator = application.servicesByStar();
             System.out.printf(SERVICES_SORTED);
@@ -377,9 +380,9 @@ public class Main {
         } catch (AlreadyHomeException e){
             System.out.printf(ALREADY_HOME,app.currentStudent.getStudentName());
         } catch (LodgingFullException e){
-            System.out.printf(LODGING_FULL,trimmedLodgingName);
+            System.out.printf(LODGING_FULL,app.getServiceByName(trimmedLodgingName).getserviceName());
         } catch (MoveNotAcceptableException e){
-            System.out.printf(MOVE_NOT_ACCEPTABLE,trimmedStudentName);
+            System.out.printf(MOVE_NOT_ACCEPTABLE,app.currentStudent.getStudentName());
         }
     }
 
@@ -398,13 +401,13 @@ public class Main {
         } catch (StudentDoesNotExistsException e){
             System.out.printf(STUDENT_DOESNT_EXIST,trimmedStudentName);
         } catch (ServiceNotValidException e) {
-            System.out.printf(LOCATION_NOT_VALID,trimmedServiceName);
+            System.out.printf(LOCATION_NOT_VALID,application.getServiceByName(trimmedServiceName).getserviceName());
         } catch (StudentAlreadyThereException e){
             System.out.printf(ALREADY_THERE);
         } catch (EatingServiceIsFullException e){
-            System.out.printf(EATING_SERVICE_IS_FULL,trimmedServiceName);
+            System.out.printf(EATING_SERVICE_IS_FULL,application.getServiceByName(trimmedServiceName).getserviceName());
         } catch (StudentisDistractedException e){
-            System.out.printf(STUDENT_DISTRACTED,trimmedStudentName,trimmedServiceName,trimmedStudentName);
+            System.out.printf(STUDENT_DISTRACTED,application.currentStudent.getStudentName(),application.getServiceByName(trimmedServiceName).getserviceName(),application.currentStudent.getStudentName());
         }
     }
 
@@ -438,7 +441,7 @@ public class Main {
         } catch (LodgingDoesntExistException e){
             System.out.printf(LODGING_DOESNT_EXIST,trimmedLodgingName);
         } catch (LodgingFullException e){
-            System.out.printf(LODGING_FULL,trimmedLodgingName);
+            System.out.printf(LODGING_FULL,app.getServiceByName(trimmedLodgingName).getserviceName());
         } catch (studentExistsException e){
             System.out.printf(STUDENT_EXISTS,app.getStudentByName(trimmedStudentName).getStudentName());
         }
@@ -448,7 +451,7 @@ public class Main {
         if (application.getCurrentArea() == null){
             System.out.printf(BOUNDS_NOT_DEFINED);
         }
-       else if (application.getNumberOfServices() == 0){
+       else if (application.getNumberOfServices() == AppInterface.ZERO){
             System.out.printf(NO_SERVICES);
         }
         else {
@@ -507,7 +510,7 @@ public class Main {
 
     private static void load(App app, Scanner in){
         String areaName = in.nextLine();
-        String fileName = app.splitName(areaName.trim())+".ser";
+        String fileName = app.splitName(areaName.trim().toUpperCase())+AppInterface.FILE_EXTENSION;
         App streamedObject = null;
             try(ObjectInputStream stream = new ObjectInputStream(new FileInputStream(fileName))){
                 streamedObject = (App) stream.readObject();
@@ -516,7 +519,7 @@ public class Main {
                     if (app.canSaveArea()){
                        saveArea(app);
                    }
-                    System.out.printf(BOUNDS_LOADED,streamedObject.getCurrentAreaName());
+                    System.out.printf(BOUNDS_LOADED,streamedObject.getCurrentArea().getAreaName());
                     setApplication(streamedObject);
                 }
                 else {
@@ -543,11 +546,10 @@ public class Main {
     }
 
     private static void saveArea(App app) {
-        try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(app.splitAreaName()+".ser"))){
+        try (ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(app.splitAreaName().toUpperCase()+AppInterface.FILE_EXTENSION))){
             app.saveArea();
             stream.writeObject(app);
             stream.flush();
-            stream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -570,10 +572,9 @@ public class Main {
         long rightLongitude = in.nextLong();
         String AreaName = in.nextLine();
         try {
-            App oldArea = app;
             application = (App) app.createArea(TopLatitude,leftLongitude,BottomLatitude, rightLongitude,AreaName.trim());
-            if (oldArea.canSaveArea()){
-                saveArea(oldArea);
+            if (app.canSaveArea()){
+                saveArea(app);
             }
             System.out.printf(AREA_CREATED,AreaName.trim());
         } catch (AreaAlreadyExistsException e) {
@@ -585,8 +586,8 @@ public class Main {
     }
     private static void Help () {
         HELP[] help = HELP.values();
-        for (int i = 0; i < help.length;i++){
-            System.out.println(help[i].getHelpMsg());
+        for (HELP value : help) {
+            System.out.println(value.getHelpMsg());
         }
     }
 }
