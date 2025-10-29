@@ -3,12 +3,9 @@ import dataStructures.DoublyLinkedList;
 import dataStructures.TwoWayIterator;
 
 import java.io.Serializable;
-import java.security.Provider;
 
 public class EatingService extends AbstractServices implements Serializable {
-    //DoublyLinkedListOfStudents
-    DoublyLinkedList<StudentInterface> students;
-    //List of evaluations
+   private DoublyLinkedList<StudentInterface> students;
 
     public EatingService(long latitude, long longitude, int price, int value, String serviceName, String serviceType){
         super(latitude,longitude,price,value,serviceName,serviceType);
@@ -17,18 +14,9 @@ public class EatingService extends AbstractServices implements Serializable {
     public int getMenuPrice(){
         return price;
     }
-    public int getCapacity(){
-        return value;
-    }
-
     @Override
     public boolean noStudents() {
         return students.isEmpty();
-    }
-
-    @Override
-    public void addEvaluaton(Evaluation evaluation) {
-        evaluations.add(evalCounter++,evaluation);
     }
 
     @Override

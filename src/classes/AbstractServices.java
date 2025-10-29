@@ -7,10 +7,9 @@ abstract class AbstractServices implements ServicesInterface, Serializable{
     protected int value;
     protected int price;
     protected String serviceName;
-    GeographicLocationClass serviceLocation;
+    protected GeographicLocationClass serviceLocation;
     protected int averageEvaluation;
-    ListInArray<Evaluation> evaluations;
-    protected int evalCounter;
+    protected ListInArray<Evaluation> evaluations;
     protected int oldAverageEval;
     protected String serviceType;
     public AbstractServices(long latitude, long longitude, int price, int value, String serviceName, String serviceType){
@@ -20,8 +19,7 @@ abstract class AbstractServices implements ServicesInterface, Serializable{
         serviceLocation = new GeographicLocationClass(latitude,longitude);
         averageEvaluation = DEFAULT_STAR;
         evaluations = new ListInArray<>(AppInterface.LIST_DIMENSION);
-        evalCounter = 0;
-        evaluations.add(evalCounter++,new Evaluation("DEFAULT",DEFAULT_STAR));
+        evaluations.addLast(new Evaluation("DEFAULT",DEFAULT_STAR));
         oldAverageEval = DEFAULT_STAR;
         this.serviceType = serviceType;
     }
@@ -62,7 +60,7 @@ abstract class AbstractServices implements ServicesInterface, Serializable{
         for (int i = 0; i < evaluations.size();i++){
             average = average + evaluations.get(i).getStars();
         }
-        averageEvaluation = Math.round(average/evalCounter);
+        averageEvaluation = Math.round(average/evaluations.size());
     }
     @Override
     public void setOldEval(int eval) {
@@ -76,6 +74,10 @@ abstract class AbstractServices implements ServicesInterface, Serializable{
     @Override
     public boolean hasEvalChanged() {
         return oldAverageEval != getAverageEvaluation();
+    }
+    @Override
+    public void addEvaluaton(Evaluation evaluation) {
+        evaluations.addLast(evaluation);
     }
 
 

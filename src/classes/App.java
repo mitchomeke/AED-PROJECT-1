@@ -5,26 +5,25 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.Objects;
 
 public class App implements AppInterface, Serializable {
     private AreaClass currentArea;
     private boolean currentAreaSaved;
-    ListInArray<ServicesInterface> allServices;
-    ListInArray<StudentInterface> allStudents;
+    private final ListInArray<ServicesInterface> allServices;
+    private final ListInArray<StudentInterface> allStudents;
     public StudentInterface currentStudent;
     private ServicesInterface currentService;
-    private SortedDoublyLinkedList<StudentInterface> sortedStudents;
-    Comparator<StudentInterface> comparator;
-    ListInArray<ServicesInterface> rank5;
-    ListInArray<ServicesInterface> rank4;
-    ListInArray<ServicesInterface> rank3;
-    ListInArray<ServicesInterface> rank2;
-    ListInArray<ServicesInterface> rank1;
-    ListInArray<ListInArray<ServicesInterface>> rankingServices;
-    ListInArray<ServicesInterface> leisureServices;
-    ListInArray<ServicesInterface> eatingServices;
-    ListInArray<ServicesInterface> lodgingServices;
+    private final SortedDoublyLinkedList<StudentInterface> sortedStudents;
+    private Comparator<StudentInterface> comparator;
+    private final ListInArray<ServicesInterface> rank5;
+    private final ListInArray<ServicesInterface> rank4;
+    private final ListInArray<ServicesInterface> rank3;
+    private final ListInArray<ServicesInterface> rank2;
+    private final ListInArray<ServicesInterface> rank1;
+    private final ListInArray<ListInArray<ServicesInterface>> rankingServices;
+    private final ListInArray<ServicesInterface> leisureServices;
+    private final ListInArray<ServicesInterface> eatingServices;
+    private final ListInArray<ServicesInterface> lodgingServices;
 
     public App() {
         allServices = new ListInArray<>(LIST_DIMENSION);
@@ -424,7 +423,7 @@ public class App implements AppInterface, Serializable {
            throw new NoServiceOfTypeException();
        }
        else {
-         return Objects.requireNonNull(getMostRelevantService(student, serviceType)).getserviceName();
+         return getMostRelevantService(student, serviceType).getserviceName();
        }
     }
     private ListInArray<ServicesInterface> getServicesOfType(String serviceType){
@@ -506,8 +505,8 @@ public class App implements AppInterface, Serializable {
     @Override
     public boolean outsideBoundingRectangle(long latitude, long longitude) {
         if(currentArea != null){
-            boolean insideLatitude = latitude <= currentArea.getAreaLocation().topLatitude && latitude >= currentArea.getAreaLocation().bottomLatitude;
-            boolean insideLongitude = longitude >= currentArea.getAreaLocation().leftLongitude && longitude <= currentArea.getAreaLocation().rightLongitude;
+            boolean insideLatitude = latitude <= currentArea.getAreaLocation().getTopLatitude() && latitude >= currentArea.getAreaLocation().getBottomLatitude();
+            boolean insideLongitude = longitude >= currentArea.getAreaLocation().getLeftLongitude() && longitude <= currentArea.getAreaLocation().getRightLongitude();
             return !(insideLatitude && insideLongitude);
         }
         return false;

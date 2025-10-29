@@ -5,7 +5,7 @@ import dataStructures.ListInArray;
 import java.io.Serializable;
 
 public class OutgoingStudent extends AbstractStudent implements Serializable {
-    ListInArray<ServicesInterface> visited;
+    private final ListInArray<ServicesInterface> visited;
     public OutgoingStudent(String studentName, String country, LodgingService lodgingLocation){
         super(studentName,country,lodgingLocation);
         visited = new ListInArray<>(AppInterface.LIST_DIMENSION);

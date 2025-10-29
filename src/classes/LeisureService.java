@@ -23,11 +23,6 @@ public class LeisureService extends AbstractServices implements Serializable {
     }
 
     @Override
-    public void addEvaluaton(Evaluation evaluation) {
-        evaluations.add(evalCounter++,evaluation);
-    }
-
-    @Override
     public int getPrice() {
         return getTicketPrice();
     }

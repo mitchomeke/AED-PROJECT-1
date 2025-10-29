@@ -6,9 +6,7 @@ import dataStructures.TwoWayIterator;
 import java.io.Serializable;
 
 public class LodgingService extends AbstractServices implements Serializable {
-    //List Of Students
-    DoublyLinkedList<StudentInterface> allStudents;
-    //ListOfEvaluations
+   private DoublyLinkedList<StudentInterface> allStudents;
     public LodgingService(long latitude, long longitude, int price, int value, String serviceName, String seviceType) {
         super(latitude, longitude, price, value, serviceName,seviceType);
         allStudents = new DoublyLinkedList<>();
@@ -26,17 +24,9 @@ public class LodgingService extends AbstractServices implements Serializable {
     }
 
     @Override
-    public void addEvaluaton(Evaluation evaluation) {
-        evaluations.add(evalCounter++,evaluation);
-    }
-
-
-
-    @Override
     public int getPrice() {
-        return getRoomPrice();
+        return price;
     }
-
 
     public boolean canAddStudent(){
        return allStudents.size() < getCapacity();

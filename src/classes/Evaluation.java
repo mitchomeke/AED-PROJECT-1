@@ -2,8 +2,8 @@ package classes;
 import java.io.Serializable;
 
 public class Evaluation implements Serializable {
-    String description;
-    float stars;
+   private String description;
+   private final float stars;
     public Evaluation(String description, int stars){
         this.description = description;
         this.stars = stars;
