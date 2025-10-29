@@ -26,13 +26,6 @@ public class App implements AppInterface, Serializable {
     ListInArray<ServicesInterface> eatingServices;
     ListInArray<ServicesInterface> lodgingServices;
 
-
-    //List of services
-    //List of Students
-    //Map of value: Students & key: Country
-    //Map of value: Evaluations & key: Services
-    //HashMap of value: Evaluations averages (int) & key: Services
-
     public App() {
         allServices = new ListInArray<>(LIST_DIMENSION);
         allStudents = new ListInArray<>(LIST_DIMENSION);

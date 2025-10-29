@@ -13,4 +13,32 @@ abstract class AbstractStudent implements StudentInterface , Serializable {
     }
 
     public abstract void addService(ServicesInterface service);
+
+    @Override
+    public String getStudentName() {
+        return studentName;
+    }
+
+    @Override
+    public String getStudentCountry() {
+        return country;
+    }
+    @Override
+    public LodgingService getlodgingLocation() {
+        return lodgingLocation;
+    }
+
+    @Override
+    public void setLodgingLocation(LodgingService lodgingLocation) {
+        this.lodgingLocation = lodgingLocation;
+    }
+    @Override
+    public String getCurrentLocation() {
+        return currentLocation;
+    }
+
+    @Override
+    public void setCurrentLocation(String serviceName) {
+        currentLocation = serviceName;
+    }
 }

@@ -22,21 +22,6 @@ public class EatingService extends AbstractServices implements Serializable {
     }
 
     @Override
-    public int getAverageEvaluation() {
-        computeEvaluation();
-        return averageEvaluation;
-    }
-
-    @Override
-    public String getserviceName() {
-        return serviceName;
-    }
-    @Override
-    public GeographicLocationClass getserviceLocation() {
-        return serviceLocation;
-    }
-
-    @Override
     public boolean noStudents() {
         return students.isEmpty();
     }
@@ -46,30 +31,6 @@ public class EatingService extends AbstractServices implements Serializable {
         evaluations.add(evalCounter++,evaluation);
     }
 
-    @Override
-    public void computeEvaluation() {
-        float average = 0;
-        for (int i = 0; i < evaluations.size();i++){
-            average = average + evaluations.get(i).getStars();
-        }
-        averageEvaluation = Math.round(average/evalCounter);
-    }
-
-    @Override
-    public void setOldEval(int eval) {
-        oldAverageEval = eval;
-
-    }
-
-    @Override
-    public int getOldEval() {
-        return oldAverageEval;
-    }
-
-    @Override
-    public boolean hasEvalChanged() {
-        return oldAverageEval != getAverageEvaluation();
-    }
     @Override
     public int getPrice() {
         return getMenuPrice();

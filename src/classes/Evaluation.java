@@ -20,8 +20,4 @@ public class Evaluation implements Serializable {
     public float getStars() {
         return stars;
     }
-
-    public void setStars(int stars) {
-        this.stars = stars;
-    }
 }

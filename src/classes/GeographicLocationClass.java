@@ -19,37 +19,6 @@ public class GeographicLocationClass implements GeographicLocation, Serializable
         this.latitude = latitude;
         this.longitude = longitude;
     }
-    public long getTopLatitude() {
-        return topLatitude;
-    }
-
-    public void setTopLatitude(long topLatitude) {
-        this.topLatitude = topLatitude;
-    }
-
-    public long getLeftLongitude() {
-        return leftLongitude;
-    }
-
-    public void setLeftLongitude(long leftLongitude) {
-        this.leftLongitude = leftLongitude;
-    }
-
-    public long getBottomLatitude() {
-        return bottomLatitude;
-    }
-
-    public void setBottomLatitude(long bottomLatitude) {
-        this.bottomLatitude = bottomLatitude;
-    }
-
-    public long getRightLongitude() {
-        return rightLongitude;
-    }
-
-    public void setRightLongitude(long rightLongitude) {
-        this.rightLongitude = rightLongitude;
-    }
 
     @Override
     public long getLatitude() {
@@ -61,15 +30,4 @@ public class GeographicLocationClass implements GeographicLocation, Serializable
         return longitude;
     }
 
-    @Override
-    public void setLatitude(long latitude) {
-        this.latitude = latitude;
-
-    }
-
-    @Override
-    public void setLongitude(long longitude) {
-        this.longitude = longitude;
-
-    }
 }
